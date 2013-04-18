@@ -22,6 +22,22 @@ namespace Sudoku
         public MainWindow()
         {
             InitializeComponent();
+            SudokuGame game = new SudokuGame(BoardGrid);
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Create new game
+        }
+
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Give a valid next move
+        }
+
+        private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: solve the entire puzzle and display solution
         }
     }
 }
