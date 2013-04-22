@@ -123,7 +123,7 @@ namespace Sudoku
 
     private void SolveButton_Click(object sender, RoutedEventArgs args)
     {
-      Solve(0, 0);
+      Solve();
     }
 
     private void NewGameButton_Click(object sender, RoutedEventArgs args)
@@ -256,8 +256,8 @@ namespace Sudoku
 
     public void NewGame(int row, int col, int difficulty)
     {
+      ClearBoard();
       int numberToRemove;
-
       if (difficulty == 1)
         numberToRemove = 60;
       else if (difficulty == 2)
@@ -265,7 +265,7 @@ namespace Sudoku
       else
         numberToRemove = 70;
 
-      Solve(0, 0);
+      Solve();
 
       for (int n = 0; n <= numberToRemove; n++)
       {
@@ -282,10 +282,20 @@ namespace Sudoku
       }
     }
 
-    private bool Solve(int row, int col)
+    private void ClearBoard()
+    {
+      System.Collections.IEnumerator i = board.GetEnumerator();
+      i.MoveNext();
+      while (i.MoveNext())
+      {
+        ((Square)i.Current).Reset();
+      }
+    }
+
+    private bool Solve()
     {
       Shuffle();
-      if (SolveHelper(row, col))
+      if (SolveHelper(0, 0))
       {
         solveCount = 0;
         return true;
@@ -308,28 +318,34 @@ namespace Sudoku
 
     public bool SolveHelper(int row, int col)
     {
-      //base cases
-
-      //if it's out of range or already has a number in it, skip it.
-      if (row > 8 || col > 8 || board[row, col].Number != null)
+      //if it's out of range then we're done!
+      if (row > 8 || col > 8)
       {
         return true;
       }
 
-      //try each number from the shuffled list of numbers
-      for (int n = 0; n < board.GetLength(1); n++)
+      if (board[row, col].Number == null)
       {
-        if (col > 8) throw new Exception("WHAT THE CRAP?!?!");
-        board[row, col].Number = numbers[n];
-        if (CheckMove(row, col))
+        //try each number from the shuffled list of numbers
+        for (int n = 0; n < board.GetLength(1); n++)
         {
-          solveCount++;
-          int newCol = ((col + 1) % 9);
-          if (newCol > 8)
-            throw new Exception("WHAT THE CRAP?!?!");
-          if (SolveHelper(col == 8 ? row + 1 : row, newCol))
-            return true;
+          if (col > 8) throw new Exception("WHAT THE CRAP?!?!");
+          board[row, col].Number = numbers[n];
+          if (CheckMove(row, col))
+          {
+            solveCount++;
+            int newCol = ((col + 1) % 9);
+            if (newCol > 8)
+              throw new Exception("WHAT THE CRAP?!?!");
+            if (SolveHelper(col == 8 ? row + 1 : row, newCol))
+              return true;
+          }
         }
+      }
+      else//there is already a number in the square
+      {
+        int newCol = ((col + 1) % 9);
+        return SolveHelper(col == 8 ? row + 1 : row, newCol);
       }
       //backtrack
       board[row, col].Number = null;

@@ -32,7 +32,6 @@ namespace Sudoku
 
     public Square(int r, int c, string soundName)
     {
-      Number = null;
       Height = 48;
       Width = 48;
       FontSize = 32;
@@ -41,6 +40,12 @@ namespace Sudoku
       Sound = soundName;
       Row = r;
       Col = c;
+      Reset();
+    }
+
+    public void Reset()
+    {
+      Number = null;
       IsChangable = false;
     }
   }
