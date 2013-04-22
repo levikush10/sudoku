@@ -28,7 +28,7 @@ namespace Sudoku
     /// <summary>
     /// True if this Square was part of the original Sudoku board, false otherwise.
     /// </summary>
-    public bool IsFixed;
+    public bool IsChangable {get; set;}
 
     public Square(int r, int c, string soundName)
     {
@@ -41,6 +41,7 @@ namespace Sudoku
       Sound = soundName;
       Row = r;
       Col = c;
+      IsChangable = false;
     }
   }
 }

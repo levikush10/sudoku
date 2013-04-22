@@ -238,6 +238,8 @@ namespace Sudoku
 
     #endregion
 
+    #region Sounds
+
     private void PlaySound(Square t)
     {
       PlaySound(t.Sound);
@@ -247,6 +249,10 @@ namespace Sudoku
       player.Source = new Uri("Sounds/" + soundName, UriKind.Relative);
       player.Play();
     }
+
+    #endregion
+    
+
 
     public void NewGame(int row, int col, int difficulty)
     {
@@ -269,11 +275,22 @@ namespace Sudoku
         if (board[n1, n2].Number != null)
         {
           board[n1, n2].Number = null;
-          board[n1, n2].IsFixed = true;
+          board[n1, n2].IsChangable = true;
         }
         else
           n--;
       }
+    }
+
+    private bool Solve(int row, int col)
+    {
+      Shuffle();
+      if (SolveHelper(row, col))
+      {
+        solveCount = 0;
+        return true;
+      }
+      return false;
     }
 
     private void Shuffle()
@@ -289,26 +306,17 @@ namespace Sudoku
       }
     }
 
-    private bool Solve(int row, int col)
-    {
-      Shuffle();
-      if (SolveHelper(row, col))
-      {
-        solveCount = 0;
-        return true;
-      }
-      return false;
-    }
-
     public bool SolveHelper(int row, int col)
     {
       //base cases
-      if (row > 8 || col > 8 || solveCount == 81 || board[row, col].IsFixed)
+
+      //if it's out of range or already has a number in it, skip it.
+      if (row > 8 || col > 8 || board[row, col].Number != null)
       {
         return true;
       }
 
-      //try each number 1-9
+      //try each number from the shuffled list of numbers
       for (int n = 0; n < board.GetLength(1); n++)
       {
         if (col > 8) throw new Exception("WHAT THE CRAP?!?!");
@@ -323,7 +331,6 @@ namespace Sudoku
             return true;
         }
       }
-
       //backtrack
       board[row, col].Number = null;
       solveCount--;
