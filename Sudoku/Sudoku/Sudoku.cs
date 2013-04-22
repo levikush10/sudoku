@@ -245,7 +245,10 @@ namespace Sudoku
                 int n2 = random.Next(0, 9);
 
                 if (board[n1, n2].Number != null)
+                {
                     board[n1, n2].Number = null;
+                    board[n1, n2].IsFixed = true;
+                }
                 else
                     n--;
 
