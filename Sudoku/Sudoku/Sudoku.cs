@@ -24,6 +24,8 @@ namespace Sudoku
 
     private int solveCount = 0;
 
+    #region Initialization
+
     public SudokuGame(UniformGrid g, Button newGame, Button hint, Button solve)
     {
       this.grid = g;
@@ -44,32 +46,9 @@ namespace Sudoku
       //PlaySound("MineSweeperStart.mp3");
     }
 
-    private void SolveButton_Click(object sender, RoutedEventArgs args)
-    {
-      Solve(0, 0);
-    }
-
-    private void NewGameButton_Click(object sender, RoutedEventArgs args)
-    {
-      int dif = 1;
-      NewGame(0, 0, dif);
-    }
-
-    private void InitializeSounds()
-    {
-      player = new MediaElement
-      {
-        LoadedBehavior = MediaState.Manual,
-        UnloadedBehavior = MediaState.Stop,
-      };
-      player.MediaEnded += (o, e) => player.Stop();
-
-      grid.Children.Add(player);
-    }
     private void InitializeBoard()
     {
       this.board = new Square[this.grid.Rows, this.grid.Columns];
-      //this.AddMines(10);
       this.AddSquares();
     }
     private void AddBoardButtonsToGrid()
@@ -96,6 +75,79 @@ namespace Sudoku
         num++;
       }
     }
+
+    private void InitializeSounds()
+    {
+      player = new MediaElement
+      {
+        LoadedBehavior = MediaState.Manual,
+        UnloadedBehavior = MediaState.Stop,
+      };
+      player.MediaEnded += (o, e) => player.Stop();
+
+      grid.Children.Add(player);
+    }
+
+    private void AddSquares()
+    {
+      int num = 0;
+      while (true)
+      {
+        bool length = num < this.board.GetLength(0);
+        if (!length)
+        {
+          break;
+        }
+        int num1 = 0;
+        while (true)
+        {
+          length = num1 < this.board.GetLength(1);
+          if (!length)
+            break;
+          length = board[num, num1] != null;
+          if (!length)
+          {
+            Square tile = new Square(num, num1, "MineSweeperMove.mp3");
+            tile.Click += TileClick;
+            tile.MouseRightButtonUp += tile_MouseRightButtonUp;
+            this.board[num, num1] = tile;
+          }
+          num1++;
+        }
+        num++;
+      }
+    }
+    #endregion
+
+    #region Event Handlers
+
+    private void SolveButton_Click(object sender, RoutedEventArgs args)
+    {
+      Solve(0, 0);
+    }
+
+    private void NewGameButton_Click(object sender, RoutedEventArgs args)
+    {
+      int dif = 1;
+      NewGame(0, 0, dif);
+    }
+
+    public void TileClick(object sender, EventArgs e)
+    {
+      //TODO: fill this in for what to do when a user clicks a square
+    }
+
+    static void tile_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+    {
+      //TODO: here maybe we should allow the user to decrement the number when right clicking?
+      // and then the number could be incremented on left click?
+      // that might be nice to they don't have to click as many times. It could just wrap around.
+    }
+
+    #endregion
+
+    #region Old Code
+
     //private void AddMines(int numberOfMines)
     //{
     //    bool flag = numberOfMines <= this.board.Length;
@@ -137,50 +189,6 @@ namespace Sudoku
     //        throw new ArgumentException();
     //    }
     //}
-    private void AddSquares()
-    {
-      int num = 0;
-      while (true)
-      {
-        bool length = num < this.board.GetLength(0);
-        if (!length)
-        {
-          break;
-        }
-        int num1 = 0;
-        while (true)
-        {
-          length = num1 < this.board.GetLength(1);
-          if (!length)
-            break;
-          length = board[num, num1] != null;
-          if (!length)
-          {
-            Square tile = new Square(num, num1, "MineSweeperMove.mp3");
-            tile.Click += TileClick;
-            tile.MouseRightButtonUp += tile_MouseRightButtonUp;
-            this.board[num, num1] = tile;
-          }
-          num1++;
-        }
-        num++;
-      }
-    }
-
-    private void PlaySound(Square t)
-    {
-      PlaySound(t.Sound);
-    }
-    private void PlaySound(string soundName)
-    {
-      player.Source = new Uri("Sounds/" + soundName, UriKind.Relative);
-      player.Play();
-    }
-
-    public void TileClick(object sender, EventArgs e)
-    {
-      //TODO: fill this in for what to do when a user clicks a square
-    }
 
     //private int NumberOfSurroundingMines(int row, int col)
     //{
@@ -228,65 +236,44 @@ namespace Sudoku
     //    return num11;
     //}
 
-    static void tile_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+    #endregion
+
+    private void PlaySound(Square t)
     {
-      //TODO: here maybe we should allow the user to decrement the number when right clicking?
-      // and then the number could be incremented on left click?
-      // that might be nice to they don't have to click as many times. It could just wrap around.
+      PlaySound(t.Sound);
+    }
+    private void PlaySound(string soundName)
+    {
+      player.Source = new Uri("Sounds/" + soundName, UriKind.Relative);
+      player.Play();
     }
 
-    public bool NewGame(int row, int col, int difficulty)
+    public void NewGame(int row, int col, int difficulty)
     {
+      int numberToRemove;
+
       if (difficulty == 1)
-      {
-        Solve(0, 0);
-
-        for (int n = 0; n < 61; n++)
-        {
-          int n1 = random.Next(0, 9);
-          int n2 = random.Next(0, 9);
-
-          if (board[n1, n2].Number != null)
-          {
-            board[n1, n2].Number = null;
-            board[n1, n2].IsFixed = true;
-          }
-          else
-            n--;
-        }
-      }
-
+        numberToRemove = 60;
       else if (difficulty == 2)
-      {
-        Solve(0, 0);
-
-        for (int n = 0; n < 66; n++)
-        {
-          int n1 = random.Next(0, 9);
-          int n2 = random.Next(0, 9);
-
-          if (board[n1, n2].Number != null)
-            board[n1, n2].Number = null;
-          else
-            n--;
-        }
-      }
+        numberToRemove = 65;
       else
+        numberToRemove = 70;
+
+      Solve(0, 0);
+
+      for (int n = 0; n <= numberToRemove; n++)
       {
-        Solve(0, 0);
+        int n1 = random.Next(0, 9);
+        int n2 = random.Next(0, 9);
 
-        for (int n = 0; n < 71; n++)
+        if (board[n1, n2].Number != null)
         {
-          int n1 = random.Next(0, 9);
-          int n2 = random.Next(0, 9);
-
-          if (board[n1, n2].Number != null)
-            board[n1, n2].Number = null;
-          else
-            n--;
+          board[n1, n2].Number = null;
+          board[n1, n2].IsFixed = true;
         }
+        else
+          n--;
       }
-      return true;
     }
 
     private void Shuffle()
