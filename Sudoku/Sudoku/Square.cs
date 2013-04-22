@@ -43,12 +43,4 @@ namespace Sudoku
       Col = c;
     }
   }
-
-  public enum TileStatus
-  {
-    Covered,
-    Uncovered,
-    Flag,
-    Question
-  }
 }
