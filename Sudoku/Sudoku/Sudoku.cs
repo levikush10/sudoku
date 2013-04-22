@@ -32,6 +32,7 @@ namespace Sudoku
 
       //initialize event handlers for buttons
       this.SolveButton.Click += new RoutedEventHandler(SolveButton_Click);
+      this.NewGameButton.Click += new RoutedEventHandler(NewGameButton_Click);
 
       InitializeSounds();
 
@@ -41,6 +42,12 @@ namespace Sudoku
     private void SolveButton_Click(object sender, RoutedEventArgs args)
     {
       Solve(0, 0);
+    }
+
+    private void NewGameButton_Click(object sender, RoutedEventArgs args)
+    {
+        int dif = 1;
+        NewGame(0, 0, dif);
     }
 
     private void InitializeSounds()
@@ -221,6 +228,70 @@ namespace Sudoku
       //TODO: here maybe we should allow the user to decrement the number when right clicking?
       // and then the number could be incremented on left click?
       // that might be nice to they don't have to click as many times. It could just wrap around.
+    }
+
+    public bool NewGame(int row, int col, int difficulty)
+    {
+        Random random = new Random();
+
+
+        if (difficulty == 1)
+        {
+            Solve(0, 0);
+
+            for (int n = 0; n < 61; n++)
+            {
+                int n1 = random.Next(0, 9);
+                int n2 = random.Next(0, 9);
+
+                if (board[n1, n2].Number != null)
+                    board[n1, n2].Number = null;
+                else
+                    n--;
+
+            }
+       
+            
+        }
+
+        else if (difficulty == 2)
+        {
+            Solve(0, 0);
+
+            for (int n = 0; n < 66; n++)
+            {
+                int n1 = random.Next(0, 9);
+                int n2 = random.Next(0, 9);
+
+                if (board[n1, n2].Number != null)
+                    board[n1, n2].Number = null;
+                else
+                    n--;
+
+            }
+           
+        }
+
+        else
+        {
+            Solve(0, 0);
+
+            for (int n = 0; n < 71; n++)
+            {
+                int n1 = random.Next(0, 9);
+                int n2 = random.Next(0, 9);
+
+                if (board[n1, n2].Number != null)
+                    board[n1, n2].Number = null;
+                else
+                    n--;
+
+            }
+
+        }
+
+        return true;
+
     }
 
     public bool Solve(int row, int col)
