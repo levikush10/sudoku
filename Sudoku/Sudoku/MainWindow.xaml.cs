@@ -24,20 +24,5 @@ namespace Sudoku
       InitializeComponent();
       SudokuGame game = new SudokuGame(BoardGrid, NewGameButton, HintButton, SolveButton);
     }
-
-    private void HintButton_Click(object sender, RoutedEventArgs e)
-    {
-      //TODO: Give a valid next move
-    }
-
-    private void SolveButton_Click(object sender, RoutedEventArgs e)
-    {
-      //TODO: solve the entire puzzle and display solution
-    }
-
-    private void NewGameButton_Click(object sender, RoutedEventArgs e)
-    {
-      //TODO: Create new game
-    }
   }
 }

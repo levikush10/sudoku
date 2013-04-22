@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using System.Windows;
 using System.Media;
+using System.Collections.Generic;
 
 namespace Sudoku
 {
@@ -18,6 +19,8 @@ namespace Sudoku
     private Button NewGameButton;
     private Button HintButton;
     private Button SolveButton;
+    private Random random;
+    List<int> numbers;
 
     private int solveCount = 0;
 
@@ -29,6 +32,8 @@ namespace Sudoku
       this.NewGameButton = newGame;
       this.HintButton = hint;
       this.SolveButton = solve;
+      random = new Random();
+      numbers = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
       //initialize event handlers for buttons
       this.SolveButton.Click += new RoutedEventHandler(SolveButton_Click);
@@ -46,8 +51,8 @@ namespace Sudoku
 
     private void NewGameButton_Click(object sender, RoutedEventArgs args)
     {
-        int dif = 1;
-        NewGame(0, 0, dif);
+      int dif = 1;
+      NewGame(0, 0, dif);
     }
 
     private void InitializeSounds()
@@ -232,72 +237,83 @@ namespace Sudoku
 
     public bool NewGame(int row, int col, int difficulty)
     {
-        Random random = new Random();
+      if (difficulty == 1)
+      {
+        Solve(0, 0);
 
-
-        if (difficulty == 1)
+        for (int n = 0; n < 61; n++)
         {
-            Solve(0, 0);
+          int n1 = random.Next(0, 9);
+          int n2 = random.Next(0, 9);
 
-            for (int n = 0; n < 61; n++)
-            {
-                int n1 = random.Next(0, 9);
-                int n2 = random.Next(0, 9);
-
-                if (board[n1, n2].Number != null)
-                {
-                    board[n1, n2].Number = null;
-                    board[n1, n2].IsFixed = true;
-                }
-                else
-                    n--;
-
-            }
-       
-            
+          if (board[n1, n2].Number != null)
+          {
+            board[n1, n2].Number = null;
+            board[n1, n2].IsFixed = true;
+          }
+          else
+            n--;
         }
+      }
 
-        else if (difficulty == 2)
+      else if (difficulty == 2)
+      {
+        Solve(0, 0);
+
+        for (int n = 0; n < 66; n++)
         {
-            Solve(0, 0);
+          int n1 = random.Next(0, 9);
+          int n2 = random.Next(0, 9);
 
-            for (int n = 0; n < 66; n++)
-            {
-                int n1 = random.Next(0, 9);
-                int n2 = random.Next(0, 9);
-
-                if (board[n1, n2].Number != null)
-                    board[n1, n2].Number = null;
-                else
-                    n--;
-
-            }
-           
+          if (board[n1, n2].Number != null)
+            board[n1, n2].Number = null;
+          else
+            n--;
         }
+      }
+      else
+      {
+        Solve(0, 0);
 
-        else
+        for (int n = 0; n < 71; n++)
         {
-            Solve(0, 0);
+          int n1 = random.Next(0, 9);
+          int n2 = random.Next(0, 9);
 
-            for (int n = 0; n < 71; n++)
-            {
-                int n1 = random.Next(0, 9);
-                int n2 = random.Next(0, 9);
-
-                if (board[n1, n2].Number != null)
-                    board[n1, n2].Number = null;
-                else
-                    n--;
-
-            }
-
+          if (board[n1, n2].Number != null)
+            board[n1, n2].Number = null;
+          else
+            n--;
         }
-
-        return true;
-
+      }
+      return true;
     }
 
-    public bool Solve(int row, int col)
+    private void Shuffle()
+    {
+      int temp;
+      int next;
+      for (int i = numbers.Count - 1; i > 0; i--)
+      {
+        next = random.Next(i + 1);
+        temp = numbers[i];
+        numbers[i] = numbers[next];
+        numbers[next] = temp;
+      }
+    }
+
+    private bool Solve(int row, int col)
+    {
+      Shuffle();
+      if (SolveHelper(row, col))
+      {
+        solveCount = 0;
+        return true;
+      }
+      return false;
+    }
+
+    public bool SolveHelper(int row, int col)
     {
       //base cases
       if (row > 8 || col > 8 || solveCount == 81 || board[row, col].IsFixed)
@@ -306,17 +322,17 @@ namespace Sudoku
       }
 
       //try each number 1-9
-      for (int n = 1; n <= board.GetLength(1); n++)
+      for (int n = 0; n < board.GetLength(1); n++)
       {
         if (col > 8) throw new Exception("WHAT THE CRAP?!?!");
-        board[row, col].Number = n;
+        board[row, col].Number = numbers[n];
         if (CheckMove(row, col))
         {
           solveCount++;
           int newCol = ((col + 1) % 9);
           if (newCol > 8)
             throw new Exception("WHAT THE CRAP?!?!");
-          if (Solve(col == 8 ? row + 1 : row, newCol))
+          if (SolveHelper(col == 8 ? row + 1 : row, newCol))
             return true;
         }
       }
@@ -363,6 +379,6 @@ namespace Sudoku
           if (i != row && j != col && board[i, j].Number == board[row, col].Number)
             return false;
       return true;
-    } 
+    }
   }
 }
