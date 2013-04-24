@@ -22,7 +22,7 @@ namespace Sudoku
     private Random random;
     List<int> numbers;
 
-    private int solveCount = 0;
+    private int numSquaresToSolve = 0;
 
     #region Initialization
 
@@ -40,6 +40,7 @@ namespace Sudoku
       //initialize event handlers for buttons
       this.SolveButton.Click += new RoutedEventHandler(SolveButton_Click);
       this.NewGameButton.Click += new RoutedEventHandler(NewGameButton_Click);
+      this.HintButton.Click += new RoutedEventHandler(HintButton_Click);
 
       InitializeSounds();
       //PlaySound("MineSweeperStart.mp3"); Delete
@@ -122,7 +123,11 @@ namespace Sudoku
 
     private void SolveButton_Click(object sender, RoutedEventArgs args)
     {
-      Solve();
+      if (!Solve(81))
+      {
+        MessageBoxButton messageBoxButton = MessageBoxButton.OK;
+        MessageBox.Show("The current board layout does not lead to a solution. Try removing some numbers and try again.", "Solve Message", messageBoxButton);
+      }
     }
 
     private void NewGameButton_Click(object sender, RoutedEventArgs args)
@@ -131,28 +136,50 @@ namespace Sudoku
       NewGame(0, 0, dif);
     }
 
+    private void HintButton_Click(object sender, RoutedEventArgs args)
+    {
+      if (!Solve(1))
+      {
+        MessageBoxButton messageBoxButton = MessageBoxButton.OK;
+        MessageBox.Show("There is no current valid move with this board layout. Try removing some numbers and try again.", "Hint Message", messageBoxButton);
+      }
+    }
+
     public void TileClick(object sender, EventArgs e)
     {
-        Square s = sender as Square;
-        if (s.IsChangable == true)
+      Square s = sender as Square;
+      if (s.IsChangable == true)
+      {
+        if (s.Number == null)
+          s.Number = 1;
+        else if (s.Number == 9)
+          s.Number = null;
+        else
+          s.Number++;
+
+        if (!(CheckRow(s.Row, s.Col) && CheckColumn(s.Row, s.Col) && CheckGroup(s.Row, s.Col)))
         {
-            if (s.Number == null || s.Number == 9)
-                s.Number = 1;
-            else
-                s.Number++;
+          s.Foreground = Brushes.Red;
         }
+        else
+        {
+          s.Foreground = Brushes.Black;
+        }
+      }
     }
 
     static void tile_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
     {
-        Square s = sender as Square;
-        if (s.IsChangable == true)
-        {
-            if (s.Number == null || s.Number == 1)
-                s.Number = 9;
-            else
-                s.Number--;
-        }
+      Square s = sender as Square;
+      if (s.IsChangable == true)
+      {
+        if (s.Number == null)
+          s.Number = 9;
+        else if (s.Number == 1)
+          s.Number = null;
+        else
+          s.Number--;
+      }
     }
 
     #endregion
@@ -262,8 +289,6 @@ namespace Sudoku
     }
 
     #endregion
-    
-
 
     public void NewGame(int row, int col, int difficulty)
     {
@@ -276,7 +301,7 @@ namespace Sudoku
       else
         numberToRemove = 70;
 
-      Solve();
+      Solve(81);
 
       for (int n = 0; n <= numberToRemove; n++)
       {
@@ -287,6 +312,7 @@ namespace Sudoku
         {
           board[n1, n2].Number = null;
           board[n1, n2].IsChangable = true;
+          board[n1, n2].Foreground = Brushes.Black;
         }
         else
           n--;
@@ -299,16 +325,18 @@ namespace Sudoku
       i.MoveNext();
       while (i.MoveNext())
       {
-        ((Square)i.Current).Reset();
+        Square s = (Square)i.Current;
+        s.Reset();
       }
     }
 
-    private bool Solve()
+    private bool Solve(int num)
     {
       Shuffle();
-      if (SolveHelper(0, 0))
+      numSquaresToSolve = num;
+      if (SolveHelper(0, 0, 0))
       {
-        solveCount = 0;
+
         return true;
       }
       return false;
@@ -327,14 +355,18 @@ namespace Sudoku
       }
     }
 
-    public bool SolveHelper(int row, int col)
+    public bool SolveHelper(int row, int col, int count)
     {
+      if (count >= numSquaresToSolve)
+      {
+        return true;
+      }
       //if it's out of range then we're done!
       if (row > 8 || col > 8)
       {
         return true;
       }
-
+      int newCol = ((col + 1) % 9);
       if (board[row, col].Number == null)
       {
         //try each number from the shuffled list of numbers
@@ -344,23 +376,28 @@ namespace Sudoku
           board[row, col].Number = numbers[n];
           if (CheckMove(row, col))
           {
-            solveCount++;
-            int newCol = ((col + 1) % 9);
+            //numSquaresToSolve++;
+            if (numSquaresToSolve == 1)
+              board[row, col].Foreground = Brushes.Green;
             if (newCol > 8)
               throw new Exception("WHAT THE CRAP?!?!");
-            if (SolveHelper(col == 8 ? row + 1 : row, newCol))
+            if (SolveHelper(col == 8 ? row + 1 : row, newCol, count + 1))
               return true;
           }
         }
       }
       else//there is already a number in the square
       {
-        int newCol = ((col + 1) % 9);
-        return SolveHelper(col == 8 ? row + 1 : row, newCol);
+        return SolveHelper(col == 8 ? row + 1 : row, newCol, count);
       }
       //backtrack
       board[row, col].Number = null;
-      solveCount--;
+      if (numSquaresToSolve == 1)
+      {
+        board[row, col].Foreground = Brushes.Black;
+        if (SolveHelper(col == 8 ? row + 1 : row, newCol, count))
+          return true;
+      }
       return false;
     }
 

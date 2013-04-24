@@ -36,7 +36,7 @@ namespace Sudoku
       Height = 48;
       Width = 48;
       FontSize = 32;
-      Foreground = Brushes.Black;
+      Foreground = Brushes.Blue;
       //Background = Brushes.White; //Easy way we could color code sections
       FontWeight = FontWeights.Bold;
       Sound = sound;
@@ -49,6 +49,7 @@ namespace Sudoku
     {
       Number = null;
       IsChangable = false;
+      Foreground = Brushes.Blue;
     }
   }
 }
