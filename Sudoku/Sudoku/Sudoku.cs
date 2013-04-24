@@ -42,8 +42,7 @@ namespace Sudoku
       this.NewGameButton.Click += new RoutedEventHandler(NewGameButton_Click);
 
       InitializeSounds();
-
-      //PlaySound("MineSweeperStart.mp3");
+      //PlaySound("MineSweeperStart.mp3"); Delete
     }
 
     private void InitializeBoard()
@@ -134,14 +133,26 @@ namespace Sudoku
 
     public void TileClick(object sender, EventArgs e)
     {
-      //TODO: fill this in for what to do when a user clicks a square
+        Square s = sender as Square;
+        if (s.IsChangable == true)
+        {
+            if (s.Number == null || s.Number == 9)
+                s.Number = 1;
+            else
+                s.Number++;
+        }
     }
 
     static void tile_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
     {
-      //TODO: here maybe we should allow the user to decrement the number when right clicking?
-      // and then the number could be incremented on left click?
-      // that might be nice to they don't have to click as many times. It could just wrap around.
+        Square s = sender as Square;
+        if (s.IsChangable == true)
+        {
+            if (s.Number == null || s.Number == 1)
+                s.Number = 9;
+            else
+                s.Number--;
+        }
     }
 
     #endregion
