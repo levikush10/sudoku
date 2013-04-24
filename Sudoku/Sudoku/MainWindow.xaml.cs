@@ -24,5 +24,11 @@ namespace Sudoku
       InitializeComponent();
       SudokuGame game = new SudokuGame(BoardGrid, NewGameButton, HintButton, SolveButton);
     }
+
+    private void button1_Click(object sender, RoutedEventArgs e)
+    {
+        var newWindow = new Window1();
+        newWindow.Show();
+    }
   }
 }
