@@ -14,7 +14,7 @@ namespace Sudoku
     public readonly int Row;
     public readonly int Col;
     /// <summary>
-    /// True if this Square was part of the original Sudoku board, false otherwise.
+    /// True if the user can change the square, false otherwise.
     /// </summary>
     public bool IsChangable { get; set; }
 
@@ -36,8 +36,7 @@ namespace Sudoku
       Height = 48;
       Width = 48;
       FontSize = 32;
-      Foreground = Brushes.Blue;
-      //Background = Brushes.White; //Easy way we could color code sections
+      Background = Brushes.LightGray;
       FontWeight = FontWeights.Bold;
       Sound = sound;
       Row = r;

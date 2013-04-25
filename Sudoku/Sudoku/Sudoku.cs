@@ -53,27 +53,20 @@ namespace Sudoku
     }
     private void AddBoardButtonsToGrid()
     {
-      int num = 0;
-      while (true)
-      {
-        bool rows = num < this.grid.Rows;
-        if (!rows)
+      for(int i = 0; i < this.grid.Rows; i++)
+        for (int j = 0; j < this.grid.Columns; j++)
         {
-          break;
-        }
-        int num1 = 0;
-        while (true)
-        {
-          rows = num1 < this.grid.Columns;
-          if (!rows)
+          this.grid.Children.Add(this.board[i, j]);
+          //shade the squares
+          Square upperLeft = FindUpperLeftOfGroup(i, j);
+          if ((upperLeft.Row == 0 && upperLeft.Col == 3) ||
+              (upperLeft.Row == 3 && upperLeft.Col == 0) ||
+              (upperLeft.Row == 3 && upperLeft.Col == 6) ||
+              (upperLeft.Row == 6 && upperLeft.Col == 3))
           {
-            break;
+            board[i, j].Background = Brushes.White;
           }
-          this.grid.Children.Add(this.board[num, num1]);
-          num1++;
         }
-        num++;
-      }
     }
 
     private void InitializeSounds()
@@ -157,18 +150,12 @@ namespace Sudoku
         else
           s.Number++;
 
-        if (!(CheckRow(s.Row, s.Col) && CheckColumn(s.Row, s.Col) && CheckGroup(s.Row, s.Col)))
-        {
-          s.Foreground = Brushes.Red;
-        }
-        else
-        {
-          s.Foreground = Brushes.Black;
-        }
+        CheckUserMove(s);
+
       }
     }
 
-    static void tile_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+    public void tile_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
     {
       Square s = sender as Square;
       if (s.IsChangable == true)
@@ -179,6 +166,20 @@ namespace Sudoku
           s.Number = null;
         else
           s.Number--;
+
+        CheckUserMove(s);
+      }
+    }
+
+    private void CheckUserMove(Square s)
+    {
+      if (!(CheckRow(s.Row, s.Col) && CheckColumn(s.Row, s.Col) && CheckGroup(s.Row, s.Col)))
+      {
+        s.Foreground = Brushes.Red;
+      }
+      else
+      {
+        s.Foreground = Brushes.Black;
       }
     }
 
@@ -336,7 +337,6 @@ namespace Sudoku
       numSquaresToSolve = num;
       if (SolveHelper(0, 0, 0))
       {
-
         return true;
       }
       return false;
@@ -428,12 +428,18 @@ namespace Sudoku
       return true;
     }
 
-    private bool CheckGroup(int row, int col)
+    private Square FindUpperLeftOfGroup(int row, int col)
     {
       int upperLeftRow = row - (row % 3);
       int upperLeftCol = col - (col % 3);
-      for (int i = upperLeftRow; i <= upperLeftRow + 2; i++)
-        for (int j = upperLeftCol; j <= upperLeftCol + 2; j++)
+      return board[upperLeftRow, upperLeftCol];
+    }
+
+    private bool CheckGroup(int row, int col)
+    {
+      Square s = FindUpperLeftOfGroup(row, col);
+      for (int i = s.Row; i <= s.Row + 2; i++)
+        for (int j = s.Col; j <= s.Col + 2; j++)
           if (i != row && j != col && board[i, j].Number == board[row, col].Number)
             return false;
       return true;
