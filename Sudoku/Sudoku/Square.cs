@@ -17,6 +17,7 @@ namespace Sudoku
     /// True if the user can change the square, false otherwise.
     /// </summary>
     public bool IsChangable { get; set; }
+    public bool IsValid { get; set; }
 
     public int? Number
     {
@@ -49,6 +50,7 @@ namespace Sudoku
       Number = null;
       IsChangable = false;
       Foreground = Brushes.Blue;
+      IsValid = true;
     }
   }
 }

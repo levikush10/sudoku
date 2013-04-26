@@ -116,10 +116,18 @@ namespace Sudoku
 
     private void SolveButton_Click(object sender, RoutedEventArgs args)
     {
-      if (!Solve(81))
+      if (IsBoardValid())
+      {
+        if (!Solve(81))
+        {
+          MessageBoxButton messageBoxButton = MessageBoxButton.OK;
+          MessageBox.Show("The current board layout does not lead to a solution. Try removing some numbers and try again.", "Solve Message", messageBoxButton);
+        }
+      }
+      else
       {
         MessageBoxButton messageBoxButton = MessageBoxButton.OK;
-        MessageBox.Show("The current board layout does not lead to a solution. Try removing some numbers and try again.", "Solve Message", messageBoxButton);
+        MessageBox.Show("The board is not currently valid. Please remove invalid numbers and try again.", "Solve Message", messageBoxButton);
       }
     }
 
@@ -173,13 +181,15 @@ namespace Sudoku
 
     private void CheckUserMove(Square s)
     {
-      if (!(CheckRow(s.Row, s.Col) && CheckColumn(s.Row, s.Col) && CheckGroup(s.Row, s.Col)))
+      if (!CheckMove(s.Row, s.Col))
       {
         s.Foreground = Brushes.Red;
+        s.IsValid = false;
       }
       else
       {
         s.Foreground = Brushes.Black;
+        s.IsValid = true;
       }
     }
 
@@ -320,12 +330,26 @@ namespace Sudoku
       }
     }
 
+    private bool IsBoardValid()
+    {
+      System.Collections.IEnumerator i = board.GetEnumerator();
+      Square s;
+      while (i.MoveNext())
+      {
+        s = (Square)i.Current;
+        if (s.IsValid == false)
+          return false;
+      }
+      return true;
+    }
+
     private void ClearBoard()
     {
       System.Collections.IEnumerator i = board.GetEnumerator();
+      Square s;
       while (i.MoveNext())
       {
-        Square s = (Square)i.Current;
+        s = (Square)i.Current;
         s.Reset();
       }
     }
