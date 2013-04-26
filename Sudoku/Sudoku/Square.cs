@@ -37,7 +37,7 @@ namespace Sudoku
       Height = 48;
       Width = 48;
       FontSize = 32;
-      Background = Brushes.LightGray;
+      Background = Brushes.White;
       FontWeight = FontWeights.Bold;
       Sound = sound;
       Row = r;

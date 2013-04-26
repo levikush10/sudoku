@@ -66,7 +66,7 @@ namespace Sudoku
               (upperLeft.Row == 3 && upperLeft.Col == 6) ||
               (upperLeft.Row == 6 && upperLeft.Col == 3))
           {
-            board[i, j].Background = Brushes.White;
+            board[i, j].Background = Brushes.LightGray;
           }
         }
     }
@@ -102,7 +102,7 @@ namespace Sudoku
           length = board[num, num1] != null;
           if (!length)
           {
-            Square tile = new Square(num, num1, "MineSweeperMove.mp3");
+            Square tile = new Square(num, num1, "");
             tile.Click += TileClick;
             tile.MouseRightButtonUp += tile_MouseRightButtonUp;
             this.board[num, num1] = tile;
@@ -433,6 +433,8 @@ namespace Sudoku
 
     private bool CheckMove(int row, int col)
     {
+      if (board[row, col].Number == null)
+        return true;
       return CheckRow(row, col) && CheckColumn(row, col) && CheckGroup(row, col);
     }
 
