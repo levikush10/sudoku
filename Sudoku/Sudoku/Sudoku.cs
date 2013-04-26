@@ -323,7 +323,6 @@ namespace Sudoku
     private void ClearBoard()
     {
       System.Collections.IEnumerator i = board.GetEnumerator();
-      i.MoveNext();
       while (i.MoveNext())
       {
         Square s = (Square)i.Current;
