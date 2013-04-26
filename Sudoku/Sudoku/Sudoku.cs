@@ -137,7 +137,7 @@ namespace Sudoku
     {
      // MessageBoxButton messageBoxButton = MessageBoxButton.OK;
       //MessageBox.Show("Please select your difficulty", "Difficulty Message", messageBoxButton);
-      Form1 frm = new Form1();
+      DifficultyForm frm = new DifficultyForm();
       frm.ShowDialog();
       int dif = frm.dif;
       NewGame(0, 0, dif);

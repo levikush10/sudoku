@@ -9,11 +9,11 @@ using System.Windows.Forms;
 
 namespace Sudoku
 {
-  public partial class Form1 : Form
+  public partial class DifficultyForm : Form
   {
     public int dif = 0;
 
-    public Form1()
+    public DifficultyForm()
     {
       InitializeComponent();
     }
