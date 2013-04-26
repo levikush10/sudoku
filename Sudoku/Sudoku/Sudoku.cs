@@ -11,6 +11,8 @@ using System.Collections.Generic;
 
 namespace Sudoku
 {
+  
+
   internal class SudokuGame
   {
     private UniformGrid grid;
@@ -133,9 +135,14 @@ namespace Sudoku
 
     private void NewGameButton_Click(object sender, RoutedEventArgs args)
     {
-      int dif = 1;
+     // MessageBoxButton messageBoxButton = MessageBoxButton.OK;
+      //MessageBox.Show("Please select your difficulty", "Difficulty Message", messageBoxButton);
+      Form1 frm = new Form1();
+      frm.ShowDialog();
+      int dif = frm.dif;
       NewGame(0, 0, dif);
     }
+
 
     private void HintButton_Click(object sender, RoutedEventArgs args)
     {
