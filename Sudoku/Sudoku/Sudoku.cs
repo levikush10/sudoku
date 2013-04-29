@@ -11,13 +11,11 @@ using System.Collections.Generic;
 
 namespace Sudoku
 {
-  
-
   internal class SudokuGame
   {
     private UniformGrid grid;
     private Square[,] board;
-    private MediaElement player;
+    //private MediaElement player;
     private Button NewGameButton;
     private Button HintButton;
     private Button SolveButton;
@@ -43,9 +41,6 @@ namespace Sudoku
       this.SolveButton.Click += new RoutedEventHandler(SolveButton_Click);
       this.NewGameButton.Click += new RoutedEventHandler(NewGameButton_Click);
       this.HintButton.Click += new RoutedEventHandler(HintButton_Click);
-
-      InitializeSounds();
-      //PlaySound("MineSweeperStart.mp3"); Delete
     }
 
     private void InitializeBoard()
@@ -71,17 +66,17 @@ namespace Sudoku
         }
     }
 
-    private void InitializeSounds()
-    {
-      player = new MediaElement
-      {
-        LoadedBehavior = MediaState.Manual,
-        UnloadedBehavior = MediaState.Stop,
-      };
-      player.MediaEnded += (o, e) => player.Stop();
+    //private void InitializeSounds()
+    //{
+    //  player = new MediaElement
+    //  {
+    //    LoadedBehavior = MediaState.Manual,
+    //    UnloadedBehavior = MediaState.Stop,
+    //  };
+    //  player.MediaEnded += (o, e) => player.Stop();
 
-      grid.Children.Add(player);
-    }
+    //  grid.Children.Add(player);
+    //}
 
     private void AddSquares()
     {
@@ -202,111 +197,19 @@ namespace Sudoku
 
     #endregion
 
-    #region Old Code
+    //#region Sounds
 
-    //private void AddMines(int numberOfMines)
+    //private void PlaySound(Square t)
     //{
-    //    bool flag = numberOfMines <= this.board.Length;
-    //    if (flag)
-    //    {
-    //        Random random = new Random();
-    //        int num = 0;
-    //        while (true)
-    //        {
-    //            flag = num < numberOfMines;
-    //            if (!flag)
-    //            {
-    //                break;
-    //            }
-    //            bool flag1 = true;
-    //            do
-    //            {
-    //                int num1 = random.Next(this.board.Length);
-    //                int length = num1 / this.board.GetLength(0);
-    //                int length1 = num1 % this.board.GetLength(0);
-    //                flag = this.board[length, length1] != null;
-    //                if (!flag)
-    //                {
-    //                    Mine mine = new Mine(length, length1, "MineSweeperMines.mp3");
-    //                    mine.Click += new RoutedEventHandler(this.MineClick);
-    //                    mine.MouseRightButtonUp += tile_MouseRightButtonUp;
-    //                    this.board[length, length1] = mine;
-    //                    flag1 = false;
-    //                }
-    //                flag = flag1;
-    //            }
-    //            while (flag);
-    //            num++;
-    //        }
-    //        return;
-    //    }
-    //    else
-    //    {
-    //        throw new ArgumentException();
-    //    }
+    //  PlaySound(t.Sound);
+    //}
+    //private void PlaySound(string soundName)
+    //{
+    //  player.Source = new Uri("Sounds/" + soundName, UriKind.Relative);
+    //  player.Play();
     //}
 
-    //private int NumberOfSurroundingMines(int row, int col)
-    //{
-    //    bool flag;
-    //    int num;
-    //    int num1;
-    //    int num2;
-    //    int num3;
-    //    int num4 = 0;
-    //    int num5 = row - 1;
-    //    int num6 = col - 1;
-    //    while (true)
-    //    {
-    //        flag = num6 <= col + 1;
-    //        if (!flag)
-    //        {
-    //            break;
-    //        }
-    //        int num7 = num4;
-    //        num = (this.IsMine(num5, num6) ? 1 : 0);
-    //        num4 = num7 + num;
-    //        num6++;
-    //    }
-    //    int num8 = num4;
-    //    num1 = (this.IsMine(row, col - 1) ? 1 : 0);
-    //    num4 = num8 + num1;
-    //    int num9 = num4;
-    //    num2 = (this.IsMine(row, col + 1) ? 1 : 0);
-    //    num4 = num9 + num2;
-    //    num5 = row + 1;
-    //    num6 = col - 1;
-    //    while (true)
-    //    {
-    //        flag = num6 <= col + 1;
-    //        if (!flag)
-    //        {
-    //            break;
-    //        }
-    //        int num10 = num4;
-    //        num3 = (this.IsMine(num5, num6) ? 1 : 0);
-    //        num4 = num10 + num3;
-    //        num6++;
-    //    }
-    //    int num11 = num4;
-    //    return num11;
-    //}
-
-    #endregion
-
-    #region Sounds
-
-    private void PlaySound(Square t)
-    {
-      PlaySound(t.Sound);
-    }
-    private void PlaySound(string soundName)
-    {
-      player.Source = new Uri("Sounds/" + soundName, UriKind.Relative);
-      player.Play();
-    }
-
-    #endregion
+    //#endregion
 
     public void NewGame(int row, int col, int difficulty)
     {
